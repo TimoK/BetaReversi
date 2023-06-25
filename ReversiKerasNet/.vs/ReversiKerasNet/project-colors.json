@@ -1,0 +1,31 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "ca7c0156-dbd0-459f-b296-d05a12a05b53": {
+      "ProjectGuid": "ca7c0156-dbd0-459f-b296-d05a12a05b53",
+      "DisplayName": "ReversiKerasNet",
+      "ColorIndex": 0
+    },
+    "b77bbcd8-bd06-4ed3-91ad-0855334c5658": {
+      "ProjectGuid": "b77bbcd8-bd06-4ed3-91ad-0855334c5658",
+      "DisplayName": "ReversiNeuralNet",
+      "ColorIndex": 1
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
+    },
+    "5bcd9a0f-8e02-4fa5-a5e8-6d02f3289c96": {
+      "ProjectGuid": "5bcd9a0f-8e02-4fa5-a5e8-6d02f3289c96",
+      "DisplayName": "ReversiVisualisation",
+      "ColorIndex": 2
+    },
+    "ea385b6b-8c4d-4086-81ab-a0ae5b77efc9": {
+      "ProjectGuid": "ea385b6b-8c4d-4086-81ab-a0ae5b77efc9",
+      "DisplayName": "ReversiVisualisation",
+      "ColorIndex": 3
+    }
+  },
+  "NextColorIndex": 4
+}

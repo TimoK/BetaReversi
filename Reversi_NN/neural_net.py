@@ -25,10 +25,6 @@ from __future__ import print_function
 import argparse
 import sys
 import numpy as np
-
-
-from tensorflow.examples.tutorials.mnist import input_data
-
 import tensorflow as tf
 
 FLAGS = None
