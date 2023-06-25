@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Keras;
-using Keras.Datasets;
+﻿using Keras;
 using Keras.Layers;
 using Keras.Models;
-using Keras.Utils;
 using Numpy;
 
 namespace ReversiNeuralNet
@@ -15,14 +8,20 @@ namespace ReversiNeuralNet
     internal class ExpertPredictionModel
     {
         private const int MAX_ROWS_OUTPUT = 500;
+        private const int BATCH_SIZE = 100000;
+        private const int VERBOSE = 1;
 
-
-        internal Sequential Model { get; set; }
+        internal BaseModel Model { get; set; }
         internal TrainingData TrainingData { get; set; }
+        internal string TrainingDataFilename { get; set; }
 
-        internal void TrainModel()
+        /// <summary>
+        /// Train new model
+        /// </summary>
+        internal ExpertPredictionModel(string trainingDataFilename, int epochs)
         {
-            TrainingData = new TrainingData();
+            TrainingData = new TrainingData(trainingDataFilename);
+            TrainingDataFilename = trainingDataFilename;
 
             var model = new Sequential();
             model.Add(new Dense(64, activation: "relu", input_shape: new Shape(64)));
@@ -32,7 +31,7 @@ namespace ReversiNeuralNet
 
             //Compile and train
             model.Compile(optimizer: "sgd", loss: "binary_crossentropy", metrics: new string[] { "accuracy" });
-            model.Fit(np.array(TrainingData.inputBoardTrainData), np.array(TrainingData.outputPositionTrainData), batch_size: 100000, epochs: 100, verbose: 1);
+            model.Fit(np.array(TrainingData.inputBoardTrainData), np.array(TrainingData.outputPositionTrainData), batch_size: BATCH_SIZE, epochs: epochs, verbose: VERBOSE);
 
             var outputPositionTrainPredictions = model.Predict(np.array(TrainingData.inputBoardTrainData));
             Console.WriteLine(outputPositionTrainPredictions);
@@ -42,26 +41,32 @@ namespace ReversiNeuralNet
             Model = model;
         }
 
-        internal void SaveModel()
+        /// <summary>
+        /// Load existing model from files. Assumes data file used for training still exists and remains unchanged
+        /// </summary>
+        internal ExpertPredictionModel(string modelName)
+        {
+            Model = BaseModel.ModelFromJson(File.ReadAllText(Constants.FILE_PATH + modelName + ".json"));
+            Model.LoadWeight(Constants.FILE_PATH + modelName + ".h5");
+            TrainingDataFilename = File.ReadAllText(Constants.FILE_PATH + modelName + "_training_data_filename.txt");
+
+            TrainingData = new TrainingData(TrainingDataFilename);
+        }
+
+        internal void SaveModel(string name)
         {
             string json = Model.ToJson();
-            File.WriteAllText("model.json", json);
-            Model.SaveWeight("model.h5");
+            File.WriteAllText(Constants.FILE_PATH + name + ".json", json);
+            Model.SaveWeight(Constants.FILE_PATH + name + ".h5");
+            File.WriteAllText(Constants.FILE_PATH + name + "_training_data_filename.txt", TrainingDataFilename);
         }
 
-        internal void LoadModel()
-        {
-            //Load model and weight
-            Model = (Sequential)Sequential.ModelFromJson(File.ReadAllText("model.json"));
-            Model.LoadWeight("model.h5");
-        }
-
-        internal void SavePredicitons(bool testData = true)
+        internal void SavePredicitonsToText(bool testData = true)
         {
             var outputPredictions = Model.Predict(testData ? TrainingData.inputBoardTestData : TrainingData.inputBoardTrainData);
             var outputPredictionsArray = outputPredictions.GetData<float>();
 
-            using (var writer = new StreamWriter(TrainingData.FILE_PATH + "predictions.txt"))
+            using (var writer = new StreamWriter(Constants.FILE_PATH + "predictions.txt"))
             {
                 var testSetSize = Math.Min(MAX_ROWS_OUTPUT, testData ? TrainingData.inputBoardTestData.GetLength(0) : TrainingData.inputBoardTrainData.GetLength(0));
 
@@ -69,12 +74,12 @@ namespace ReversiNeuralNet
                 {
                     WriteArray(testData ? TrainingData.inputBoardTestData : TrainingData.inputBoardTrainData, i, writer);
                     WriteArray(testData ? TrainingData.outputPositionTestData : TrainingData.outputPositionTrainData, i, writer);
-                    WriteArray(Convert(outputPredictionsArray, 64), i, writer);
+                    WriteArray(Convert(outputPredictionsArray, Constants.BOARD_TILES), i, writer);
                 }
             }
         }
 
-        internal float[,] Convert(float[] singleDimensionArray, int dimSize)
+        internal static float[,] Convert(float[] singleDimensionArray, int dimSize)
         {
             var doubleDimensionArray = new float[singleDimensionArray.Length / dimSize, dimSize];
             for (int i = 0; i < singleDimensionArray.Length; ++i)
@@ -84,7 +89,7 @@ namespace ReversiNeuralNet
             return doubleDimensionArray;
         }
 
-        private void WriteArray(float[,] array, int index, StreamWriter writer)
+        private static void WriteArray(float[,] array, int index, StreamWriter writer)
         {
             for(int i = 0; i < array.GetLength(1); ++i)
             {

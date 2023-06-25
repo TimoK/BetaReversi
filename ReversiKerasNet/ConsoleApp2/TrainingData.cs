@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Keras;
-using Keras.Datasets;
-using Keras.Layers;
-using Keras.Models;
-using Keras.Utils;
-using Numpy;
-
-namespace ReversiNeuralNet
+﻿namespace ReversiNeuralNet
 {
     public class TrainingData
     {
-        private const int BOARD_LENGTH = 64;
+        /// <summary>
+        /// The fraction of data used for training, as opposed to testing
+        /// </summary>
         private const double TRAINING_FRACTION = 0.8;
-
-        public const string FILE_PATH = "..\\..\\..\\..\\..\\Gamefiles\\";
 
         internal float[,] inputBoardTrainData;
         internal float[,] outputPositionTrainData;
@@ -25,11 +13,9 @@ namespace ReversiNeuralNet
         internal float[,] inputBoardTestData;
         internal float[,] outputPositionTestData;
 
-        int testLines;
-
-        internal TrainingData()
+        internal TrainingData(string filename)
         {
-            var lines = File.ReadAllLines(FILE_PATH + "neuralNetworkInputsSmall.txt");
+            var lines = File.ReadAllLines(Constants.FILE_PATH + filename);
             var numberOfTrainingLines = (int)(lines.Length * TRAINING_FRACTION);
             var trainingLines = lines.Take(numberOfTrainingLines).ToArray();
             var testLines = lines.Skip(numberOfTrainingLines).ToArray();
@@ -40,8 +26,8 @@ namespace ReversiNeuralNet
 
         internal (float[,], float[,]) GetInputAndOutput(string[] lines)
         {
-            var inputBoardDataArray = new float[lines.Length, BOARD_LENGTH];
-            var outputPositionDataArray = new float[lines.Length, BOARD_LENGTH];
+            var inputBoardDataArray = new float[lines.Length, Constants.BOARD_TILES];
+            var outputPositionDataArray = new float[lines.Length, Constants.BOARD_TILES];
 
             for (var lineIndex = 0; lineIndex < lines.Length; ++lineIndex)
             {
