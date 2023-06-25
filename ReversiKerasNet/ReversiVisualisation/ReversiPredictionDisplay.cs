@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Data;
 using ReversiNeuralNet;
 
 namespace ReversiVisualisation
@@ -14,10 +6,8 @@ namespace ReversiVisualisation
     public partial class ReversiPredictionDisplay : Form
     {
         private const int OFFSET = 10;
-        private const int GRID_SIZE = 8;
         private const int TILE_SIZE = 40;
-
-        List<PredictionDataPoint> PredictionsDataPoints = new();
+        private readonly List<PredictionDataPoint> PredictionsDataPoints = new();
         private int currentPredictionCounter = 0;
 
         public ReversiPredictionDisplay()
@@ -34,6 +24,7 @@ namespace ReversiVisualisation
         {
             var keyChar = (int)e.KeyChar;
 
+            // Not sure why normal Keys.A didn't work for this, but had some problems with it. Solved it like this for now, bit hacky
             if(keyChar == 97) // 'a'
             {
                 currentPredictionCounter = Math.Max(0, currentPredictionCounter - 1);
@@ -53,15 +44,14 @@ namespace ReversiVisualisation
             var actualmovePen = new Pen(Color.Green, 5);
             var predictionPen = new Pen(Color.Purple, 3);
 
-
             var graphics = e.Graphics;
 
-            for (int i = 1; i < GRID_SIZE; ++i)
+            for (int i = 1; i < Constants.BOARD_LENGTH; ++i)
             {
                 var variablePosition = OFFSET + (i * TILE_SIZE);
 
-                graphics.DrawLine(borderPen, variablePosition, OFFSET, variablePosition, OFFSET + (TILE_SIZE * GRID_SIZE));
-                graphics.DrawLine(borderPen, OFFSET, variablePosition, OFFSET + (TILE_SIZE * GRID_SIZE), variablePosition);
+                graphics.DrawLine(borderPen, variablePosition, OFFSET, variablePosition, OFFSET + (TILE_SIZE * Constants.BOARD_LENGTH));
+                graphics.DrawLine(borderPen, OFFSET, variablePosition, OFFSET + (TILE_SIZE * Constants.BOARD_LENGTH), variablePosition);
             }
 
             var currentPrediction = PredictionsDataPoints[currentPredictionCounter];
@@ -97,7 +87,7 @@ namespace ReversiVisualisation
 
         private void LoadData()
         {
-            var filepath = TrainingData.FILE_PATH + "predictions.txt";
+            var filepath = Constants.FILE_PATH + "predictions.txt";
             var lines = File.ReadAllLines(filepath);
             for (int i = 0; i < lines.Length; i += 3)
             {
@@ -131,7 +121,7 @@ namespace ReversiVisualisation
 
         private (int, int) MapTo2D(int coordinate)
         {
-            return (coordinate % GRID_SIZE, coordinate / GRID_SIZE);
+            return (coordinate % Constants.BOARD_LENGTH, coordinate / Constants.BOARD_LENGTH);
         }
 
         private float[] ReadString(string s)
