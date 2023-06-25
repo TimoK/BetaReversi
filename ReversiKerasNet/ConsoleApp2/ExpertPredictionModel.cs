@@ -14,6 +14,8 @@ namespace ReversiNeuralNet
 {
     internal class ExpertPredictionModel
     {
+        private const int MAX_ROWS_OUTPUT = 500;
+
 
         internal Sequential Model { get; set; }
         internal TrainingData TrainingData { get; set; }
@@ -23,10 +25,10 @@ namespace ReversiNeuralNet
             TrainingData = new TrainingData();
 
             var model = new Sequential();
-            model.Add(new Dense(128, activation: "relu", input_shape: new Shape(64)));
+            model.Add(new Dense(64, activation: "relu", input_shape: new Shape(64)));
             model.Add(new Dense(256, activation: "sigmoid"));
             model.Add(new Dense(256, activation: "sigmoid"));
-            model.Add(new Dense(64, activation: "sigmoid"));
+            model.Add(new Dense(64, activation: "softmax"));
 
             //Compile and train
             model.Compile(optimizer: "sgd", loss: "binary_crossentropy", metrics: new string[] { "accuracy" });
@@ -61,7 +63,7 @@ namespace ReversiNeuralNet
 
             using (var writer = new StreamWriter(TrainingData.FILE_PATH + "predictions.txt"))
             {
-                var testSetSize = TrainingData.inputBoardTestData.GetLength(0);
+                var testSetSize = Math.Min(MAX_ROWS_OUTPUT, testData ? TrainingData.inputBoardTestData.GetLength(0) : TrainingData.inputBoardTrainData.GetLength(0));
 
                 for (int i = 0; i < testSetSize; ++i)
                 {

@@ -29,7 +29,7 @@ namespace ReversiNeuralNet
 
         internal TrainingData()
         {
-            var lines = File.ReadAllLines(FILE_PATH + "neuralNetworkInputs1999.txt");
+            var lines = File.ReadAllLines(FILE_PATH + "neuralNetworkInputsSmall.txt");
             var numberOfTrainingLines = (int)(lines.Length * TRAINING_FRACTION);
             var trainingLines = lines.Take(numberOfTrainingLines).ToArray();
             var testLines = lines.Skip(numberOfTrainingLines).ToArray();
