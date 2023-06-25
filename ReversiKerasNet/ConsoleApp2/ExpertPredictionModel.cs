@@ -8,7 +8,7 @@ namespace ReversiNeuralNet
     internal class ExpertPredictionModel
     {
         private const int MAX_ROWS_OUTPUT = 500;
-        private const int BATCH_SIZE = 100000;
+        private const int BATCH_SIZE = 5;
         private const int VERBOSE = 1;
 
         internal BaseModel Model { get; set; }
@@ -24,9 +24,9 @@ namespace ReversiNeuralNet
             TrainingDataFilename = trainingDataFilename;
 
             var model = new Sequential();
-            model.Add(new Dense(64, activation: "relu", input_shape: new Shape(64)));
-            model.Add(new Dense(256, activation: "sigmoid"));
-            model.Add(new Dense(256, activation: "sigmoid"));
+            model.Add(new Dense(Constants.BOARD_TILES * 6, activation: "relu", input_shape: new Shape(Constants.BOARD_TILES * 3)));
+            model.Add(new Dense(Constants.BOARD_TILES * 12, activation: "sigmoid"));
+            model.Add(new Dense(Constants.BOARD_TILES * 12, activation: "sigmoid"));
             model.Add(new Dense(64, activation: "softmax"));
 
             //Compile and train

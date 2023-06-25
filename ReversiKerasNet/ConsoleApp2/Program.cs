@@ -4,10 +4,10 @@
     {
         static void Main(string[] args)
         {
-            //var expertPredictionModel = new ExpertPredictionModel("neuralNetworkInputsSmall.txt", 100);
+            var expertPredictionModel = new ExpertPredictionModel("neuralNetworkInputs1999.txt", 15);
             //expertPredictionModel.SaveModel("simpleModel");
 
-            var expertPredictionModel = new ExpertPredictionModel("simpleModel");
+            //var expertPredictionModel = new ExpertPredictionModel("simpleModel");
             expertPredictionModel.SavePredicitonsToText(testData: true);
         }
     }

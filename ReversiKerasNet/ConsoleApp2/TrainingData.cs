@@ -26,7 +26,7 @@
 
         internal (float[,], float[,]) GetInputAndOutput(string[] lines)
         {
-            var inputBoardDataArray = new float[lines.Length, Constants.BOARD_TILES];
+            var inputBoardDataArray = new float[lines.Length, Constants.BOARD_TILES * 3];
             var outputPositionDataArray = new float[lines.Length, Constants.BOARD_TILES];
 
             for (var lineIndex = 0; lineIndex < lines.Length; ++lineIndex)
@@ -48,15 +48,15 @@
                 {
                     var boardCharacter = boardState[boardIndex];
 
-                    var boardPositionNumber = boardCharacter switch
+                    var adaptValueIndex = boardCharacter switch
                     {
-                        'e' => 0.5f,
-                        'b' => blackIsActive ? 1f : 0f,
-                        'w' => blackIsActive ? 0f : 1f,
+                        'e' => boardIndex,
+                        'b' => blackIsActive ? boardIndex + Constants.BOARD_TILES : boardIndex + Constants.BOARD_TILES * 2,
+                        'w' => blackIsActive ? boardIndex + Constants.BOARD_TILES * 2 : boardIndex + Constants.BOARD_TILES,
                         _ => throw new NotImplementedException("Board character not recognized")
                     };
 
-                    inputBoardDataArray[lineIndex, boardIndex] = boardPositionNumber;
+                    inputBoardDataArray[lineIndex, adaptValueIndex] = 1;
                 }
 
                 var playPosX = int.Parse(lineSplit[1]);

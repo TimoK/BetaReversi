@@ -55,20 +55,20 @@ namespace ReversiVisualisation
             }
 
             var currentPrediction = PredictionsDataPoints[currentPredictionCounter];
-            for(int i = 0; i < currentPrediction.boardState.Length; ++i)
+            for(int i = 0; i < Constants.BOARD_TILES; ++i)
             {
                 bool paintBlack;
-                if(currentPrediction.boardState[i] < 0.25)
+                if(currentPrediction.boardState[i] > 0.9)
                 {
-                    paintBlack = false;
+                    continue;
                 }
-                else if(currentPrediction.boardState[i] > 0.75)
+                else if(currentPrediction.boardState[i + Constants.BOARD_TILES] > 0.9)
                 {
                     paintBlack = true;
                 }
                 else
                 {
-                    continue;
+                    paintBlack = false;
                 }
                 DrawTile(graphics, paintBlack ? activePlayerPen : passivePlayerPen, i);
             }
