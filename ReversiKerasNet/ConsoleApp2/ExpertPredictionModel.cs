@@ -2,6 +2,7 @@
 using Keras.Layers;
 using Keras.Models;
 using Numpy;
+using ReversiNeuralNet.TrainingDataDefinition;
 
 namespace ReversiNeuralNet
 {
@@ -20,11 +21,11 @@ namespace ReversiNeuralNet
         /// </summary>
         internal ExpertPredictionModel(string trainingDataFilename, int epochs)
         {
-            TrainingData = new TrainingData(trainingDataFilename);
+            TrainingData = new TrainingData(trainingDataFilename, GetInputSettings());
             TrainingDataFilename = trainingDataFilename;
 
             var model = new Sequential();
-            model.Add(new Dense(Constants.BOARD_TILES * 6, activation: "relu", input_shape: new Shape(Constants.BOARD_TILES * 3)));
+            model.Add(new Dense(Constants.BOARD_TILES * 6, activation: "relu", input_shape: new Shape(TrainingData.InputVectorLength)));
             model.Add(new Dense(Constants.BOARD_TILES * 12, activation: "sigmoid"));
             model.Add(new Dense(Constants.BOARD_TILES * 12, activation: "sigmoid"));
             model.Add(new Dense(64, activation: "softmax"));
@@ -41,6 +42,15 @@ namespace ReversiNeuralNet
             Model = model;
         }
 
+        private Dictionary<TrainingDataSetting, bool> GetInputSettings()
+        {
+            var inputSettings = new Dictionary<TrainingDataSetting, bool>();
+            inputSettings[TrainingDataSetting.EmptyBoardState] = true;
+            inputSettings[TrainingDataSetting.ActivePlayerBoardState] = true;
+            inputSettings[TrainingDataSetting.PassivePlayerBoardState] = true;
+            return inputSettings;
+        }
+
         /// <summary>
         /// Load existing model from files. Assumes data file used for training still exists and remains unchanged
         /// </summary>
@@ -50,7 +60,7 @@ namespace ReversiNeuralNet
             Model.LoadWeight(Constants.FILE_PATH + modelName + ".h5");
             TrainingDataFilename = File.ReadAllText(Constants.FILE_PATH + modelName + "_training_data_filename.txt");
 
-            TrainingData = new TrainingData(TrainingDataFilename);
+            TrainingData = new TrainingData(TrainingDataFilename, GetInputSettings());
         }
 
         internal void SaveModel(string name)
