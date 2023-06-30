@@ -1,3 +1,6 @@
+using System.Windows.Forms;
+using System;
+
 namespace ReversiVisualisation
 {
     internal static class Program
@@ -8,9 +11,9 @@ namespace ReversiVisualisation
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new ReversiPredictionDisplay());
         }
     }

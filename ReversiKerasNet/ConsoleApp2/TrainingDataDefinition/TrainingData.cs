@@ -1,4 +1,9 @@
-﻿namespace ReversiNeuralNet.TrainingDataDefinition
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace ReversiNeuralNet.TrainingDataDefinition
 {
     public class TrainingData
     {

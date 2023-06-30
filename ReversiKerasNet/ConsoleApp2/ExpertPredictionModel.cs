@@ -3,6 +3,9 @@ using Keras.Layers;
 using Keras.Models;
 using Numpy;
 using ReversiNeuralNet.TrainingDataDefinition;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace ReversiNeuralNet
 {
@@ -44,11 +47,13 @@ namespace ReversiNeuralNet
 
         private Dictionary<TrainingDataSetting, bool> GetInputSettings()
         {
-            var inputSettings = new Dictionary<TrainingDataSetting, bool>();
-            inputSettings[TrainingDataSetting.EmptyBoardState] = true;
-            inputSettings[TrainingDataSetting.ActivePlayerBoardState] = true;
-            inputSettings[TrainingDataSetting.PassivePlayerBoardState] = true;
-            return inputSettings;
+			var inputSettings = new Dictionary<TrainingDataSetting, bool>
+			{
+				[TrainingDataSetting.EmptyBoardState] = true,
+				[TrainingDataSetting.ActivePlayerBoardState] = true,
+				[TrainingDataSetting.PassivePlayerBoardState] = true
+			};
+			return inputSettings;
         }
 
         /// <summary>
