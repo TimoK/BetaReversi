@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.32014.148
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReversiNeuralNet", "ConsoleApp2\ReversiNeuralNet.csproj", "{B77BBCD8-BD06-4ED3-91AD-0855334C5658}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReversiVisualisation", "ReversiVisualisation\ReversiVisualisation.csproj", "{EA385B6B-8C4D-4086-81AB-A0AE5B77EFC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReversiVisualisation", "ReversiVisualisation\ReversiVisualisation.csproj", "{EA385B6B-8C4D-4086-81AB-A0AE5B77EFC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

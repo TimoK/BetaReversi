@@ -1,4 +1,10 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 using ReversiNeuralNet;
 
 namespace ReversiVisualisation
@@ -43,6 +49,7 @@ namespace ReversiVisualisation
             var passivePlayerPen = new Pen(Color.Red, 5);
             var actualmovePen = new Pen(Color.Green, 5);
             var predictionPen = new Pen(Color.Purple, 3);
+            var possibleMovePen = new Pen(Color.Yellow, 2);
 
             var graphics = e.Graphics;
 
@@ -55,20 +62,25 @@ namespace ReversiVisualisation
             }
 
             var currentPrediction = PredictionsDataPoints[currentPredictionCounter];
-            for(int i = 0; i < currentPrediction.boardState.Length; ++i)
+            for(int i = 0; i < Constants.BOARD_TILES; ++i)
             {
-                bool paintBlack;
-                if(currentPrediction.boardState[i] < 0.25)
+                if (currentPrediction.boardState[i + (Constants.BOARD_TILES * 3)] >= 0.9)
                 {
-                    paintBlack = false;
+                    DrawTile(graphics, possibleMovePen, i, ellipse: false);
                 }
-                else if(currentPrediction.boardState[i] > 0.75)
+
+                bool paintBlack;
+                if(currentPrediction.boardState[i] > 0.9)
+                {
+                    continue;
+                }
+                else if(currentPrediction.boardState[i + Constants.BOARD_TILES] > 0.9)
                 {
                     paintBlack = true;
                 }
                 else
                 {
-                    continue;
+                    paintBlack = false;
                 }
                 DrawTile(graphics, paintBlack ? activePlayerPen : passivePlayerPen, i);
             }
@@ -79,10 +91,14 @@ namespace ReversiVisualisation
 
         }
 
-        private void DrawTile(Graphics g, Pen pen, int position)
+        private void DrawTile(Graphics g, Pen pen, int position, bool ellipse = true)
         {
             var (x, y) = MapTo2D(position);
-            g.DrawEllipse(pen, OFFSET + (x * TILE_SIZE), OFFSET + (y * TILE_SIZE), TILE_SIZE, TILE_SIZE);
+            var rect = new Rectangle(OFFSET + (x * TILE_SIZE), OFFSET + (y * TILE_SIZE), TILE_SIZE, TILE_SIZE);
+            if (ellipse)
+                g.DrawEllipse(pen, rect);
+            else
+                g.DrawRectangle(pen, rect);
         }
 
         private void LoadData()
