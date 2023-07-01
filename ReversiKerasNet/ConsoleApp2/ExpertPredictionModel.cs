@@ -9,7 +9,7 @@ using System.IO;
 
 namespace ReversiNeuralNet
 {
-    internal class ExpertPredictionModel
+    public class ExpertPredictionModel
     {
         private const int MAX_ROWS_OUTPUT = 500;
         private const int BATCH_SIZE = 5;
@@ -22,7 +22,7 @@ namespace ReversiNeuralNet
         /// <summary>
         /// Train new model
         /// </summary>
-        internal ExpertPredictionModel(string trainingDataFilename, int epochs)
+        public ExpertPredictionModel(string trainingDataFilename, int epochs)
         {
             TrainingData = new TrainingData(trainingDataFilename, GetInputSettings());
             TrainingDataFilename = trainingDataFilename;
