@@ -4,6 +4,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ReversiAI
@@ -23,9 +24,16 @@ namespace ReversiAI
             InitializeComponent();
 
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(OnClick);
+			game.BoardChanged += Game_BoardChanged;
         }
 
-        Point offset = new Point(20, 50);
+		private void Game_BoardChanged(object sender, EventArgs e)
+		{
+            Invalidate();
+            Update();
+		}
+
+		Point offset = new Point(20, 50);
         int tileLength = 50;
         int boardLength;
 
@@ -50,7 +58,7 @@ namespace ReversiAI
 
                 if (boardSquareState == BoardSquareState.Empty)
                 {
-                    if (board.isLegalMove(boardPosition, board.CurrentPlayerColor))
+                    if (board.IsLegalMove(boardPosition, board.CurrentPlayerColor))
                     {
                         g.DrawEllipse(Pens.Blue, positionRectangle);
                     }

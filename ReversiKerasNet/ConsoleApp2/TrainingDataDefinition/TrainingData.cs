@@ -18,7 +18,8 @@ namespace ReversiNeuralNet.TrainingDataDefinition
         internal float[,] inputBoardTestData;
         internal float[,] outputPositionTestData;
 
-        internal int InputVectorLength { get; private set; }
+        public int InputVectorLength { get; private set; }
+        private Dictionary<TrainingDataSetting, int?> InputSettingStartPositions { get; }
 
         internal TrainingData(string filename, Dictionary<TrainingDataSetting, bool> inputSettingUsed)
         {
@@ -27,10 +28,10 @@ namespace ReversiNeuralNet.TrainingDataDefinition
             var trainingLines = lines.Take(numberOfTrainingLines).ToArray();
             var testLines = lines.Skip(numberOfTrainingLines).ToArray();
 
-            var inputSetingStartPositions = GetInputSettingStartPositions(inputSettingUsed);
+            InputSettingStartPositions = GetInputSettingStartPositions(inputSettingUsed);
 
-            (inputBoardTrainData, outputPositionTrainData) = GetInputAndOutput(trainingLines, inputSetingStartPositions);
-            (inputBoardTestData, outputPositionTestData) = GetInputAndOutput(testLines, inputSetingStartPositions);
+            (inputBoardTrainData, outputPositionTrainData) = GetInputAndOutput(trainingLines);
+            (inputBoardTestData, outputPositionTestData) = GetInputAndOutput(testLines);
         }
 
         internal Dictionary<TrainingDataSetting, int?> GetInputSettingStartPositions(Dictionary<TrainingDataSetting, bool> inputSettingUsed)
@@ -57,7 +58,7 @@ namespace ReversiNeuralNet.TrainingDataDefinition
         }
 
 
-        internal (float[,], float[,]) GetInputAndOutput(string[] lines, Dictionary<TrainingDataSetting, int?> inputSettingStartPositions)
+        public (float[,], float[,]) GetInputAndOutput(string[] lines)
         {
             var inputBoardDataArray = new float[lines.Length, InputVectorLength];
             var outputPositionDataArray = new float[lines.Length, Constants.BOARD_TILES];
@@ -84,26 +85,26 @@ namespace ReversiNeuralNet.TrainingDataDefinition
                     var y = boardIndex / 8;
                     var boardCharacter = boardState[boardIndex];
 
-                    if (boardCharacter == 'e' && inputSettingStartPositions[TrainingDataSetting.EmptyBoardState].HasValue)
+                    if (boardCharacter == 'e' && InputSettingStartPositions[TrainingDataSetting.EmptyBoardState].HasValue)
                     {
-                        inputBoardDataArray[lineIndex, boardIndex + inputSettingStartPositions[TrainingDataSetting.EmptyBoardState].Value] = 1;
+                        inputBoardDataArray[lineIndex, boardIndex + InputSettingStartPositions[TrainingDataSetting.EmptyBoardState].Value] = 1;
                     }
                     if ((blackIsActive && boardCharacter == 'b' ||
                         !blackIsActive && boardCharacter == 'w')
-                        && inputSettingStartPositions[TrainingDataSetting.ActivePlayerBoardState].HasValue)
+                        && InputSettingStartPositions[TrainingDataSetting.ActivePlayerBoardState].HasValue)
                     {
-                        inputBoardDataArray[lineIndex, boardIndex + inputSettingStartPositions[TrainingDataSetting.ActivePlayerBoardState].Value] = 1;
+                        inputBoardDataArray[lineIndex, boardIndex + InputSettingStartPositions[TrainingDataSetting.ActivePlayerBoardState].Value] = 1;
                         boardState2D[x, y] = 1;
                     }
                     if ((blackIsActive && boardCharacter == 'w' ||
                         !blackIsActive && boardCharacter == 'b')
-                        && inputSettingStartPositions[TrainingDataSetting.PassivePlayerBoardState].HasValue)
+                        && InputSettingStartPositions[TrainingDataSetting.PassivePlayerBoardState].HasValue)
                     {
-                        inputBoardDataArray[lineIndex, boardIndex + inputSettingStartPositions[TrainingDataSetting.PassivePlayerBoardState].Value] = 1;
+                        inputBoardDataArray[lineIndex, boardIndex + InputSettingStartPositions[TrainingDataSetting.PassivePlayerBoardState].Value] = 1;
                         boardState2D[x, y] = -1;
                     }
                 }
-                if(inputSettingStartPositions[TrainingDataSetting.LegalMoves].HasValue)
+                if(InputSettingStartPositions[TrainingDataSetting.LegalMoves].HasValue)
 				{
                     var reversiBoard = new ReversiBoard(boardState2D);
                     for (var boardIndex = 0; boardIndex < boardState.Length; ++boardIndex)
@@ -111,7 +112,7 @@ namespace ReversiNeuralNet.TrainingDataDefinition
                         var x = boardIndex % 8;
                         var y = boardIndex / 8;
                         var legalMoveValue = reversiBoard.IsLegalMove(x, y) ? 1 : 0;
-                        inputBoardDataArray[lineIndex, boardIndex + inputSettingStartPositions[TrainingDataSetting.LegalMoves].Value] = legalMoveValue;
+                        inputBoardDataArray[lineIndex, boardIndex + InputSettingStartPositions[TrainingDataSetting.LegalMoves].Value] = legalMoveValue;
                     }
                 }
 

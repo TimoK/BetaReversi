@@ -19,7 +19,7 @@ namespace ReversiAI
             List<Point> boardPositions = ReversiBoard.GetBoardPositions();
             foreach (Point boardPosition in boardPositions)
             {
-                if (board.isLegalMove(boardPosition, color)) return boardPosition;
+                if (board.IsLegalMove(boardPosition, color)) return boardPosition;
             }
             throw new System.Exception("No legal moves available.");
         }
@@ -42,7 +42,7 @@ namespace ReversiAI
             List<Point> boardPositions = ReversiBoard.GetBoardPositions();
             foreach (Point boardPosition in boardPositions)
             {
-                if (board.isLegalMove(boardPosition, color))
+                if (board.IsLegalMove(boardPosition, color))
                 {
                     ReversiBoard boardWithMove = board.Copy();
                     boardWithMove.makeMove(boardPosition);
@@ -82,7 +82,7 @@ namespace ReversiAI
             List<Point> boardPositions = ReversiBoard.GetBoardPositions();
             foreach (Point boardPosition in boardPositions)
             {
-                if (board.isLegalMove(boardPosition, color))
+                if (board.IsLegalMove(boardPosition, color))
                 {
                     ReversiBoard boardWithMove = board.Copy();
                     boardWithMove.makeMove(boardPosition);
@@ -126,7 +126,7 @@ namespace ReversiAI
             List<Point> boardPositions = ReversiBoard.GetBoardPositions();
             foreach (Point boardPosition in boardPositions)
             {
-                if (board.isLegalMove(boardPosition, currentPlayerColor))
+                if (board.IsLegalMove(boardPosition, currentPlayerColor))
                 {
                     ReversiBoard boardWithMove = board.Copy();
                     boardWithMove.makeMove(boardPosition);

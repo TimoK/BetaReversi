@@ -16,7 +16,7 @@ namespace ReversiNeuralNet
         private const int VERBOSE = 1;
 
         internal BaseModel Model { get; set; }
-        internal TrainingData TrainingData { get; set; }
+        public TrainingData TrainingData { get; set; }
         internal string TrainingDataFilename { get; set; }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace ReversiNeuralNet
         /// <summary>
         /// Load existing model from files. Assumes data file used for training still exists and remains unchanged
         /// </summary>
-        internal ExpertPredictionModel(string modelName)
+        public ExpertPredictionModel(string modelName)
         {
             Model = BaseModel.ModelFromJson(File.ReadAllText(Constants.FILE_PATH + modelName + ".json"));
             Model.LoadWeight(Constants.FILE_PATH + modelName + ".h5");
@@ -77,7 +77,7 @@ namespace ReversiNeuralNet
             File.WriteAllText(Constants.FILE_PATH + name + "_training_data_filename.txt", TrainingDataFilename);
         }
 
-        internal void SavePredicitonsToText(bool testData = true)
+        public void SavePredicitonsToText(bool testData = true)
         {
             var outputPredictions = Model.Predict(testData ? TrainingData.inputBoardTestData : TrainingData.inputBoardTrainData);
             var outputPredictionsArray = outputPredictions.GetData<float>();
@@ -94,6 +94,13 @@ namespace ReversiNeuralNet
                 }
             }
         }
+
+        public float[] GetPrediction(float[,] input)
+		{
+            var outputPrediction = Model.Predict(input);
+            var outputPredictionArray = outputPrediction.GetData<float>();
+            return outputPredictionArray;
+		}
 
         internal static float[,] Convert(float[] singleDimensionArray, int dimSize)
         {

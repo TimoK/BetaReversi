@@ -15,15 +15,18 @@ namespace ReversiAI
         bool player1_human, player2_human;
         AI ai1, ai2;
 
+        public event EventHandler BoardChanged;
+
         public ReversiGame()
         {
             double[] evoScoreWeights = { 9.9464677320544, 663.725223387073, 397.310830727661, 18.3461926578452, 41.8220717677244, 100.265637983259 };
 
             // Hardcoded for now, can later add it to initialize options or input it in console
             player1_human = false;
-            player2_human = true;
+            player2_human = false;
             ai1 = new MinMax(new DynamicHeuristic(), 3, true);
-            ai2 = new MinMax(new DynamicHeuristic(scoreWeights: evoScoreWeights), 3, true);
+            ai2 = new NeuralNetworkAI();
+            //ai2 = new MinMax(new DynamicHeuristic(scoreWeights: evoScoreWeights), 3, true);
 
             if (!player1_human) player1Move();
         }
@@ -58,7 +61,7 @@ namespace ReversiAI
         {
             if (board.CurrentPlayerColor == PlayerColor.White && !player1_human) return;
             if (board.CurrentPlayerColor == PlayerColor.Black && !player2_human) return;
-            if (!board.isLegalMove(move, board.CurrentPlayerColor)) return;
+            if (!board.IsLegalMove(move, board.CurrentPlayerColor)) return;
 
             MakeMove(move);
         }
@@ -67,11 +70,14 @@ namespace ReversiAI
         {
             if (board.GameEnded) return;
 
-            if (!board.isLegalMove(move, board.CurrentPlayerColor))
+            if (!board.IsLegalMove(move, board.CurrentPlayerColor))
             {
                 throw new Exception("Illegal move was made.");
             }
             board.makeMove(move);
+            BoardChanged?.Invoke(this, new EventArgs());
+            //Nice for human vs fast ai games, to first see impact of own move before direct counter move
+            //Thread.Sleep(2000);
 
             if (!board.GameEnded)
             {
@@ -84,7 +90,7 @@ namespace ReversiAI
     {
         public static int boardSize = 8;
 
-        private BoardSquareState[,] board = new BoardSquareState[8, 8];
+        public BoardSquareState[,] Board = new BoardSquareState[8, 8];
         private PlayerColor currentPlayerColor = PlayerColor.White;
         public List<Point> directions;
 
@@ -140,10 +146,10 @@ namespace ReversiAI
         {
             // First empty the board, then put the starting pieces on the board
             emptyBoard();
-            board[3, 3] = BoardSquareState.White;
-            board[4, 3] = BoardSquareState.Black;
-            board[3, 4] = BoardSquareState.Black;
-            board[4, 4] = BoardSquareState.White;
+            Board[3, 3] = BoardSquareState.White;
+            Board[4, 3] = BoardSquareState.Black;
+            Board[3, 4] = BoardSquareState.Black;
+            Board[4, 4] = BoardSquareState.White;
             // Make white the first player to move
             currentPlayerColor = PlayerColor.White;
         }
@@ -153,18 +159,18 @@ namespace ReversiAI
             // Make all the tiles empty
             for (int x = 0; x < boardSize; ++x)
                 for (int y = 0; y < boardSize; ++y)
-                    board[x, y] = BoardSquareState.Empty;
+                    Board[x, y] = BoardSquareState.Empty;
         }
 
         public void makeMove(Point move)
         {
             if (OutOfBounds(move)) throw new System.ArgumentException("Move position out of board bounds.");
-            if (board[move.X, move.Y] != BoardSquareState.Empty) throw new System.ArgumentException("Boardmove not possible, position not empty.");
-            if (!isLegalMove(move, currentPlayerColor)) return;
+            if (Board[move.X, move.Y] != BoardSquareState.Empty) throw new System.ArgumentException("Boardmove not possible, position not empty.");
+            if (!IsLegalMove(move, currentPlayerColor)) return;
 
             PlayerColor opponentPlayerColor = otherPlayerColor(currentPlayerColor);
             // Assign the tile that the player picked to the player
-            board[move.X, move.Y] = getTile(currentPlayerColor);
+            Board[move.X, move.Y] = getTile(currentPlayerColor);
             increasePlayerScore(currentPlayerColor, 1);
             // Go over into each direction, if a own tile is discovered change all opponent tiles inbetween to own
             foreach (Point direction in directions)
@@ -175,11 +181,11 @@ namespace ReversiAI
                 {
                     position.Offset(direction);
                     if (OutOfBounds(position)) break;
-                    if (board[position.X, position.Y] == BoardSquareState.Empty) break;
-                    if (board[position.X, position.Y] == getTile(opponentPlayerColor)) opponentTilesToChange.Add(position);
-                    if (board[position.X, position.Y] == getTile(currentPlayerColor))
+                    if (Board[position.X, position.Y] == BoardSquareState.Empty) break;
+                    if (Board[position.X, position.Y] == getTile(opponentPlayerColor)) opponentTilesToChange.Add(position);
+                    if (Board[position.X, position.Y] == getTile(currentPlayerColor))
                     {
-                        foreach (Point opponentTileToChange in opponentTilesToChange) board[opponentTileToChange.X, opponentTileToChange.Y] = getTile(currentPlayerColor);
+                        foreach (Point opponentTileToChange in opponentTilesToChange) Board[opponentTileToChange.X, opponentTileToChange.Y] = getTile(currentPlayerColor);
                         increasePlayerScore(currentPlayerColor, opponentTilesToChange.Count);
                         increasePlayerScore(opponentPlayerColor, -opponentTilesToChange.Count);
                         break;
@@ -206,7 +212,7 @@ namespace ReversiAI
         private bool currentPlayerNoLegalMoves()
         {
             List<Point> boardPositions = GetBoardPositions();
-            foreach (Point boardPosition in boardPositions) if (isLegalMove(boardPosition, currentPlayerColor)) return false;
+            foreach (Point boardPosition in boardPositions) if (IsLegalMove(boardPosition, currentPlayerColor)) return false;
             return true;
         }
 
@@ -225,7 +231,7 @@ namespace ReversiAI
             this.currentPlayerColor = toCopy.CurrentPlayerColor;
             foreach (Point position in ReversiBoard.GetBoardPositions())
             {
-                this.board[position.X, position.Y] = toCopy.GetBoardState(position);
+                this.Board[position.X, position.Y] = toCopy.GetBoardState(position);
             }
         }
 
@@ -234,15 +240,15 @@ namespace ReversiAI
             int numLegalMoves = 0;
             foreach (Point position in GetBoardPositions())
             {
-                if (isLegalMove(position, playerColor)) ++numLegalMoves;
+                if (IsLegalMove(position, playerColor)) ++numLegalMoves;
             }
             return numLegalMoves;
         }
 
-        public bool isLegalMove(Point move, PlayerColor playerColor)
+        public bool IsLegalMove(Point move, PlayerColor playerColor)
         {
             if (OutOfBounds(move)) return false;
-            if (board[move.X, move.Y] != BoardSquareState.Empty) return false;
+            if (Board[move.X, move.Y] != BoardSquareState.Empty) return false;
 
             BoardSquareState movingPlayerTile = getTile(playerColor);
             BoardSquareState opponentTile = getTile(otherPlayerColor(playerColor));
@@ -255,9 +261,9 @@ namespace ReversiAI
                 {
                     position.Offset(direction);
                     if (OutOfBounds(position)) break;
-                    if (board[position.X, position.Y] == BoardSquareState.Empty) break;
-                    if (board[position.X, position.Y] == opponentTile) encounteredOpponent = true;
-                    if (board[position.X, position.Y] == movingPlayerTile)
+                    if (Board[position.X, position.Y] == BoardSquareState.Empty) break;
+                    if (Board[position.X, position.Y] == opponentTile) encounteredOpponent = true;
+                    if (Board[position.X, position.Y] == movingPlayerTile)
                     {
                         if (encounteredOpponent) return true;
                         break;
@@ -276,7 +282,7 @@ namespace ReversiAI
 
         public BoardSquareState GetBoardState(Point position)
         {
-            return board[position.X, position.Y];
+            return Board[position.X, position.Y];
         }
 
         public static BoardSquareState getTile(PlayerColor playerColor)

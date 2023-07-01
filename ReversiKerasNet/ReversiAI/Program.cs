@@ -1,3 +1,4 @@
+using ReversiNeuralNet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace ReversiAI
 		[STAThread]
 		static void Main()
 		{
+			Keras.Keras.DisablePySysConsoleLog = true;
+
 			ReversiGame game = new ReversiGame();
 
 			Application.SetHighDpiMode(HighDpiMode.SystemAware);
