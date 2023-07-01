@@ -51,7 +51,8 @@ namespace ReversiNeuralNet
 			{
 				[TrainingDataSetting.EmptyBoardState] = true,
 				[TrainingDataSetting.ActivePlayerBoardState] = true,
-				[TrainingDataSetting.PassivePlayerBoardState] = true
+				[TrainingDataSetting.PassivePlayerBoardState] = true,
+                [TrainingDataSetting.LegalMoves] = true
 			};
 			return inputSettings;
         }

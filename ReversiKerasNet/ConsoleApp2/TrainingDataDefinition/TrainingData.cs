@@ -43,7 +43,7 @@ namespace ReversiNeuralNet.TrainingDataDefinition
                 if (inputSettingUsed[option])
                 {
                     result[option] = position;
-                    // Assumption for now is that 
+                    // Assumption for now is that each option adds boardTiles amount of variables to the input vector
                     position += Constants.BOARD_TILES;
                 }
                 else
@@ -59,7 +59,7 @@ namespace ReversiNeuralNet.TrainingDataDefinition
 
         internal (float[,], float[,]) GetInputAndOutput(string[] lines, Dictionary<TrainingDataSetting, int?> inputSettingStartPositions)
         {
-            var inputBoardDataArray = new float[lines.Length, Constants.BOARD_TILES * 3];
+            var inputBoardDataArray = new float[lines.Length, InputVectorLength];
             var outputPositionDataArray = new float[lines.Length, Constants.BOARD_TILES];
 
             for (var lineIndex = 0; lineIndex < lines.Length; ++lineIndex)
@@ -68,6 +68,7 @@ namespace ReversiNeuralNet.TrainingDataDefinition
                 var lineSplit = line.Split(' ');
 
                 var boardState = lineSplit[0];
+                var boardState2D = new int[Constants.BOARD_LENGTH, Constants.BOARD_LENGTH];
 
                 var playerTurn = lineSplit[3];
                 var blackIsActive = playerTurn[0] switch
@@ -79,21 +80,38 @@ namespace ReversiNeuralNet.TrainingDataDefinition
 
                 for (var boardIndex = 0; boardIndex < boardState.Length; ++boardIndex)
                 {
-                    if(boardIndex == 'e' && inputSettingStartPositions[TrainingDataSetting.EmptyBoardState].HasValue)
+                    var x = boardIndex % 8;
+                    var y = boardIndex / 8;
+                    var boardCharacter = boardState[boardIndex];
+
+                    if (boardCharacter == 'e' && inputSettingStartPositions[TrainingDataSetting.EmptyBoardState].HasValue)
                     {
                         inputBoardDataArray[lineIndex, boardIndex + inputSettingStartPositions[TrainingDataSetting.EmptyBoardState].Value] = 1;
                     }
-                    if ((blackIsActive && boardIndex == 'b' ||
-                        !blackIsActive && boardIndex == 'w')
+                    if ((blackIsActive && boardCharacter == 'b' ||
+                        !blackIsActive && boardCharacter == 'w')
                         && inputSettingStartPositions[TrainingDataSetting.ActivePlayerBoardState].HasValue)
                     {
                         inputBoardDataArray[lineIndex, boardIndex + inputSettingStartPositions[TrainingDataSetting.ActivePlayerBoardState].Value] = 1;
+                        boardState2D[x, y] = 1;
                     }
-                    if ((blackIsActive && boardIndex == 'w' ||
-                        !blackIsActive && boardIndex == 'b')
+                    if ((blackIsActive && boardCharacter == 'w' ||
+                        !blackIsActive && boardCharacter == 'b')
                         && inputSettingStartPositions[TrainingDataSetting.PassivePlayerBoardState].HasValue)
                     {
                         inputBoardDataArray[lineIndex, boardIndex + inputSettingStartPositions[TrainingDataSetting.PassivePlayerBoardState].Value] = 1;
+                        boardState2D[x, y] = -1;
+                    }
+                }
+                if(inputSettingStartPositions[TrainingDataSetting.LegalMoves].HasValue)
+				{
+                    var reversiBoard = new ReversiBoard(boardState2D);
+                    for (var boardIndex = 0; boardIndex < boardState.Length; ++boardIndex)
+                    {
+                        var x = boardIndex % 8;
+                        var y = boardIndex / 8;
+                        var legalMoveValue = reversiBoard.IsLegalMove(x, y) ? 1 : 0;
+                        inputBoardDataArray[lineIndex, boardIndex + inputSettingStartPositions[TrainingDataSetting.LegalMoves].Value] = legalMoveValue;
                     }
                 }
 

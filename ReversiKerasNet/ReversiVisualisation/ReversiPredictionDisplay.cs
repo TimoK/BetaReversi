@@ -49,6 +49,7 @@ namespace ReversiVisualisation
             var passivePlayerPen = new Pen(Color.Red, 5);
             var actualmovePen = new Pen(Color.Green, 5);
             var predictionPen = new Pen(Color.Purple, 3);
+            var possibleMovePen = new Pen(Color.Yellow, 2);
 
             var graphics = e.Graphics;
 
@@ -63,6 +64,11 @@ namespace ReversiVisualisation
             var currentPrediction = PredictionsDataPoints[currentPredictionCounter];
             for(int i = 0; i < Constants.BOARD_TILES; ++i)
             {
+                if (currentPrediction.boardState[i + (Constants.BOARD_TILES * 3)] >= 0.9)
+                {
+                    DrawTile(graphics, possibleMovePen, i, ellipse: false);
+                }
+
                 bool paintBlack;
                 if(currentPrediction.boardState[i] > 0.9)
                 {
@@ -85,10 +91,14 @@ namespace ReversiVisualisation
 
         }
 
-        private void DrawTile(Graphics g, Pen pen, int position)
+        private void DrawTile(Graphics g, Pen pen, int position, bool ellipse = true)
         {
             var (x, y) = MapTo2D(position);
-            g.DrawEllipse(pen, OFFSET + (x * TILE_SIZE), OFFSET + (y * TILE_SIZE), TILE_SIZE, TILE_SIZE);
+            var rect = new Rectangle(OFFSET + (x * TILE_SIZE), OFFSET + (y * TILE_SIZE), TILE_SIZE, TILE_SIZE);
+            if (ellipse)
+                g.DrawEllipse(pen, rect);
+            else
+                g.DrawRectangle(pen, rect);
         }
 
         private void LoadData()
