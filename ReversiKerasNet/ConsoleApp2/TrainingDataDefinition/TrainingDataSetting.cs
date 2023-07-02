@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace ReversiNeuralNet.TrainingDataDefinition
 {
-    internal enum TrainingDataSetting { EmptyBoardState, ActivePlayerBoardState, PassivePlayerBoardState, LegalMoves }
+    public enum TrainingDataSetting { EmptyBoardState, ActivePlayerBoardState, PassivePlayerBoardState, LegalMoves }
 }
