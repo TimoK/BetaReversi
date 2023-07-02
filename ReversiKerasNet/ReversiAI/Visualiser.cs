@@ -17,11 +17,10 @@ namespace ReversiAI
 
         public ReversiVisualiser(ReversiGame game)
         {
-            this.game = game;
-            this.board = game.board;
+            game = game;
+            board = game.board;
             boardLength = tileLength * Constants.BOARD_LENGTH;
-
-            this.Size = new Size(offset.X + boardLength + 100, offset.Y + boardLength + 100);
+            Size = new Size(offset.X + boardLength + 100, offset.Y + boardLength + 100);
             InitializeComponent();
 
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(OnClick);

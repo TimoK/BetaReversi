@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReversiNeuralNet", "Console
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReversiVisualisation", "ReversiVisualisation\ReversiVisualisation.csproj", "{EA385B6B-8C4D-4086-81AB-A0AE5B77EFC9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReversiAI", "ReversiAI\ReversiAI.csproj", "{D336B575-B071-462C-B257-63300466D7FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{EA385B6B-8C4D-4086-81AB-A0AE5B77EFC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA385B6B-8C4D-4086-81AB-A0AE5B77EFC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA385B6B-8C4D-4086-81AB-A0AE5B77EFC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D336B575-B071-462C-B257-63300466D7FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D336B575-B071-462C-B257-63300466D7FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D336B575-B071-462C-B257-63300466D7FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D336B575-B071-462C-B257-63300466D7FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
