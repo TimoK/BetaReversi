@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 
@@ -68,7 +69,7 @@ namespace ReversiNeuralNet.TrainingDataDefinition
                 var lineSplit = line.Split(' ');
 
                 var boardState = lineSplit[0];
-                var boardState2D = new int[Constants.BOARD_LENGTH, Constants.BOARD_LENGTH];
+                var boardState2D = new BoardSquareState[Constants.BOARD_LENGTH, Constants.BOARD_LENGTH];
 
                 var playerTurn = lineSplit[3];
                 var blackIsActive = playerTurn[0] switch
@@ -77,6 +78,7 @@ namespace ReversiNeuralNet.TrainingDataDefinition
                     'w' => false,
                     _ => throw new NotImplementedException("Player character not recognized")
                 };
+                var playerColor = blackIsActive ? PlayerColor.Black : PlayerColor.White;
 
                 for (var boardIndex = 0; boardIndex < boardState.Length; ++boardIndex)
                 {
@@ -92,26 +94,27 @@ namespace ReversiNeuralNet.TrainingDataDefinition
                         !blackIsActive && boardCharacter == 'w')
                         && inputSettingStartPositions[TrainingDataSetting.ActivePlayerBoardState].HasValue)
                     {
-                        inputBoardDataArray[lineIndex, boardIndex + inputSettingStartPositions[TrainingDataSetting.ActivePlayerBoardState].Value] = 1;
-                        boardState2D[x, y] = 1;
+                        inputBoardDataArray[lineIndex, boardIndex + InputSettingStartPositions[TrainingDataSetting.ActivePlayerBoardState].Value] = 1;
                     }
                     if ((blackIsActive && boardCharacter == 'w' ||
                         !blackIsActive && boardCharacter == 'b')
                         && inputSettingStartPositions[TrainingDataSetting.PassivePlayerBoardState].HasValue)
                     {
-                        inputBoardDataArray[lineIndex, boardIndex + inputSettingStartPositions[TrainingDataSetting.PassivePlayerBoardState].Value] = 1;
-                        boardState2D[x, y] = -1;
+                        inputBoardDataArray[lineIndex, boardIndex + InputSettingStartPositions[TrainingDataSetting.PassivePlayerBoardState].Value] = 1;
+
                     }
+                    boardState2D[x, y] = boardCharacter == 'b' ? BoardSquareState.Black : (boardCharacter == 'w' ? BoardSquareState.White : BoardSquareState.Empty);
                 }
                 if(inputSettingStartPositions[TrainingDataSetting.LegalMoves].HasValue)
 				{
-                    var reversiBoard = new ReversiBoard(boardState2D);
+                    var reversiBoard = new ReversiBoard(boardState2D, playerColor);
                     for (var boardIndex = 0; boardIndex < boardState.Length; ++boardIndex)
                     {
                         var x = boardIndex % 8;
                         var y = boardIndex / 8;
-                        var legalMoveValue = reversiBoard.IsLegalMove(x, y) ? 1 : 0;
-                        inputBoardDataArray[lineIndex, boardIndex + inputSettingStartPositions[TrainingDataSetting.LegalMoves].Value] = legalMoveValue;
+                        var legalMoveValue = reversiBoard.IsLegalMove(new Point(x, y), playerColor) ? 1 : 0;
+
+                        inputBoardDataArray[lineIndex, boardIndex + InputSettingStartPositions[TrainingDataSetting.LegalMoves].Value] = legalMoveValue;
                     }
                 }
 
