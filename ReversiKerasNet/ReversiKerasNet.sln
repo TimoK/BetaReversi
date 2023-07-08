@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReversiNeuralNet", "ConsoleApp2\ReversiNeuralNet.csproj", "{B77BBCD8-BD06-4ED3-91AD-0855334C5658}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReversiNeuralNet", "ReversiNeuralNet\ReversiNeuralNet.csproj", "{B77BBCD8-BD06-4ED3-91AD-0855334C5658}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReversiVisualisation", "ReversiVisualisation\ReversiVisualisation.csproj", "{EA385B6B-8C4D-4086-81AB-A0AE5B77EFC9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReversiAI", "ReversiAI\ReversiAI.csproj", "{D336B575-B071-462C-B257-63300466D7FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReversiVisualiser", "ReversiVisualiser\ReversiVisualiser.csproj", "{D336B575-B071-462C-B257-63300466D7FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +17,6 @@ Global
 		{B77BBCD8-BD06-4ED3-91AD-0855334C5658}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B77BBCD8-BD06-4ED3-91AD-0855334C5658}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B77BBCD8-BD06-4ED3-91AD-0855334C5658}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EA385B6B-8C4D-4086-81AB-A0AE5B77EFC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EA385B6B-8C4D-4086-81AB-A0AE5B77EFC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EA385B6B-8C4D-4086-81AB-A0AE5B77EFC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EA385B6B-8C4D-4086-81AB-A0AE5B77EFC9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D336B575-B071-462C-B257-63300466D7FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D336B575-B071-462C-B257-63300466D7FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D336B575-B071-462C-B257-63300466D7FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
